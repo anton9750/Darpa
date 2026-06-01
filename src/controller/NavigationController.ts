@@ -3,15 +3,16 @@ import { PageModel } from "../models/PageModel";
 import { ProductModel } from "../models/ProductModel";
 import { CartModel } from "../models/CartModel";
 import { NotificationModel } from "../models/NotificationModel";
-import { TelemetryModel } from "../models/TelemetryModel"; // 🆕
+import { TelemetryModel } from "../models/TelemetryModel";
 import { HomeView } from "../views/HomeView";
 import { AboutView } from "../views/AboutView";
 import { LoginView } from "../views/LoginView";
 import { ProductView } from "../views/ProductView";
 import { CartView } from "../views/CartView";
 import { NotFoundView } from "../views/NotFoundView";
-import { CheckoutView } from "../views/CheckoutView"; // 🆕
-import { TelemetryView } from "../views/TelemetryView"; // 🆕
+import { CheckoutView } from "../views/CheckoutView";
+import { TelemetryView } from "../views/TelemetryView";
+import { NotificationView } from "../views/NotificationView";
 import { AudioEngine } from "../services/AudioEngine";
 
 export class NavigationController {
@@ -20,10 +21,11 @@ export class NavigationController {
     private productModel: ProductModel;
     private cartModel: CartModel;
     private notifyModel: NotificationModel;
-    private telemetryModel: TelemetryModel; // 🆕
+    private telemetryModel: TelemetryModel;
+    private notifyView: NotificationView;
     private audio: AudioEngine;
 
-    // Local runtime variables for search filtering tracking mechanisms
+    // Runtime state parameter for dynamic searching/filtering tracking mechanisms
     private searchQuery: string = "";
 
     constructor(private router: Router, private model: PageModel) {
@@ -34,7 +36,8 @@ export class NavigationController {
         this.productModel = new ProductModel();
         this.cartModel = new CartModel();
         this.notifyModel = new NotificationModel();
-        this.telemetryModel = new TelemetryModel(); // 🆕
+        this.telemetryModel = new TelemetryModel();
+        this.notifyView = new NotificationView();
         this.audio = new AudioEngine();
 
         this.setupRoutes();
@@ -53,8 +56,8 @@ export class NavigationController {
         const aboutView = new AboutView();
         const loginView = new LoginView();
         const productView = new ProductView();
-        const checkoutView = new CheckoutView(); // 🆕
-        const telemetryView = new TelemetryView(); // 🆕
+        const checkoutView = new CheckoutView();
+        const telemetryView = new TelemetryView();
         const notFoundView = new NotFoundView();
 
         this.router.register("/", () => {
@@ -65,6 +68,7 @@ export class NavigationController {
             this.telemetryModel.logEvent("Home Route Painted", performance.now() - t);
         });
 
+        // PROTECTED ROUTE GUARD: Intercepts route requests and halts unauthenticated navigation loops
         this.router.register("/shop", () => {
             const t = performance.now();
             if (!this.model.getState().isLoggedIn) {
@@ -89,7 +93,7 @@ export class NavigationController {
             this.telemetryModel.logEvent("Cart Inventory Rendered", performance.now() - t);
         });
 
-        this.router.register("/checkout", () => { // 🆕
+        this.router.register("/checkout", () => {
             const t = performance.now();
             this.model.updatePath("/checkout");
             checkoutView.setTotal(this.cartModel.getTotalPrice());
@@ -101,7 +105,8 @@ export class NavigationController {
         this.router.register("/about", () => {
             this.model.updatePath("/about");
             this.appContainer.innerHTML = aboutView.render();
-            // Inject and embed telemetry terminal directly inside the base about view workspace container dynamically
+            
+            // Embed telemetry dashboard subsystem inside the view frame dynamically
             const telemetryContainer = document.createElement("div");
             telemetryContainer.className = "mt-12";
             telemetryView.updateState(this.telemetryModel.getLogs());
@@ -142,15 +147,19 @@ export class NavigationController {
 
         this.telemetryModel.subscribe(() => {
             if (this.model.getState().currentPath === "/about") {
-                // If viewing diagnostics view interface, force auto-repaint updates
                 this.router.handleRoute("/about");
+            }
+        });
+
+        // FIXED: Invokes class-scoped notifyView cleanly, eliminating contextual reference issues
+        this.notifyModel.subscribe(() => {
+            this.notifyView.updateState(this.notifyModel.getNotifications());
+            if (this.toastAnchor) {
+                this.toastAnchor.innerHTML = this.notifyView.render();
             }
         });
     }
 
-    /**
-     * Injects a real-time responsive text search filter bar above the core product cards layer
-     */
     private renderFilteredShop(view: ProductView): void {
         const filteredList = this.productModel.getProducts().filter(product => 
             product.title.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
@@ -159,7 +168,6 @@ export class NavigationController {
 
         view.updateState(filteredList, this.productModel.getLoadingStatus(), this.productModel.getError());
         
-        // Inject Search Bar Header component interface container block wrapper natively
         const searchBarHtml = `
             <div class="mb-6 max-w-md">
                 <label class="block font-mono text-[10px] uppercase text-neutral-400 mb-1.5">// STREAMED ASSET REAL-TIME FILTER</label>
@@ -170,11 +178,9 @@ export class NavigationController {
         this.appContainer.innerHTML = searchBarHtml + view.render();
         this.attachShopListeners();
 
-        // Listen for user filtering key inputs explicitly
         const searchInput = document.getElementById("shop-search") as HTMLInputElement;
         if (searchInput) {
             searchInput.focus();
-            // Put text cursor cursor at the end
             searchInput.setSelectionRange(this.searchQuery.length, this.searchQuery.length);
             
             searchInput.addEventListener("input", (e) => {
@@ -232,10 +238,7 @@ export class NavigationController {
         });
     }
 
-    /**
-     * Advanced Simulated Terminal Asynchronous Multi-Step Checkout pipeline
-     */
-    private attachCheckoutListeners(): void { // 🆕
+    private attachCheckoutListeners(): void {
         document.getElementById("gateway-form")?.addEventListener("submit", (e) => {
             e.preventDefault();
             this.audio.playClick();
