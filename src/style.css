@@ -1,0 +1,77 @@
+@import "tailwindcss";
+
+@theme {
+  /* Custom theme colors for your project vibe */
+  --color-metal-white: #f4f5f6;
+  --color-metal-border: #d1d5db;
+  --color-lime-glow: #00ff66;
+}
+
+/* Global Styles */
+body {
+  background-color: var(--color-metal-white);
+  color: #111111;
+  font-family: system-ui, -apple-system, sans-serif;
+  overflow-x: hidden;
+}
+
+/* Jigsaw Puzzle Effect Layout */
+.jigsaw-container {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
+  gap: 4px;
+  width: 100%;
+  max-width: 600px;
+  aspect-ratio: 1 / 1;
+  margin: 2rem auto;
+}
+
+.cube {
+  background-image: url('https://picsum.photos/600/600'); /* Sample image placeholder */
+  background-size: 600px 600px;
+  background-repeat: no-repeat;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Calculate backgrounds coordinates for a 4x4 grid */
+.cube:nth-child(1)  { background-position: 0px 0px; }
+.cube:nth-child(2)  { background-position: -150px 0px; }
+.cube:nth-child(3)  { background-position: -300px 0px; }
+.cube:nth-child(4)  { background-position: -450px 0px; }
+.cube:nth-child(5)  { background-position: 0px -150px; }
+.cube:nth-child(6)  { background-position: -150px -150px; }
+.cube:nth-child(7)  { background-position: -300px -150px; }
+.cube:nth-child(8)  { background-position: -450px -150px; }
+.cube:nth-child(9)  { background-position: 0px -300px; }
+.cube:nth-child(10) { background-position: -150px -300px; }
+.cube:nth-child(11) { background-position: -300px -300px; }
+.cube:nth-child(12) { background-position: -450px -300px; }
+.cube:nth-child(13) { background-position: 0px -450px; }
+.cube:nth-child(14) { background-position: -150px -450px; }
+.cube:nth-child(15) { background-position: -300px -450px; }
+.cube:nth-child(16) { background-position: -450px -450px; }
+
+/* Tactile puzzle interaction */
+.cube:hover {
+  transform: scale(1.05) rotate(2deg);
+  filter: brightness(1.1);
+  z-index: 10;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(120%) scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

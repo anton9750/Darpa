@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DARPA Subnet Hub</title>
+    <link rel="stylesheet" href="/src/style.css">
+</head>
+<body class="bg-metal-white min-h-screen flex flex-col justify-between selection:bg-lime-500 text-neutral-950">
+
+    <header class="border-b border-neutral-300 bg-white/80 backdrop-blur-md sticky top-0 z-50 px-8 py-4 flex justify-between items-center">
+        <div class="text-xl font-black tracking-tighter uppercase flex items-center gap-4">
+            <span>⚡ DARPA</span>
+            <button id="mute-toggle" class="font-mono text-[9px] border border-neutral-300 px-2 py-0.5 tracking-widest cursor-pointer text-neutral-500 hover:border-neutral-900 hover:text-neutral-900 transition-colors">🔊 AUDIO_ON</button>
+        </div>
+        <nav class="flex gap-6 font-mono font-bold uppercase tracking-wide text-xs">
+            <a href="/" class="hover:text-lime-500 transition-colors py-1">Home</a>
+            <a href="/shop" class="hover:text-lime-500 transition-colors py-1">Shop</a>
+            <a href="/cart" class="hover:text-lime-500 transition-colors py-1 flex items-center gap-1">
+                Cart [<span id="cart-counter" class="text-lime-600 font-bold">0</span>]
+            </a>
+            <a href="/about" class="hover:text-lime-500 transition-colors py-1">About</a>
+            <a href="/login" id="nav-auth-link" class="hover:text-lime-500 transition-colors py-1">Login</a>
+        </nav>
+    </header>
+
+    <main id="app" class="flex-grow max-w-7xl w-full mx-auto p-8"></main>
+
+    <div id="toast-injector"></div>
+
+    <footer class="border-t border-neutral-300 bg-neutral-100 p-6 text-center font-mono text-[10px] text-neutral-400 tracking-wider">
+        SYS ENGINE 4.0 // ARCHITECTURE COMPLETED WITHOUT EXTERNAL FRAMEWORKS
+    </footer>
+
+    <script type="module" src="/src/app.ts"></script>
+</body>
+</html>
